@@ -1,0 +1,31 @@
+trigger: none
+
+pool: 'My-AP-DevTF'
+
+stages:
+  - stage: BuildJavaApp
+    displayName: 'Build Java Application'
+    jobs:
+      - job: BuildandPublishJob
+        displayName: 'Build and Publish Job'
+        steps:
+
+        - task: Maven@3
+          displayName: 'Build with Maven'
+          inputs:
+            mavenPomFile: 'pom.xml'
+            mavenOptions: '-Xmx3072m'
+            javaHomeOption: 'JDKVersion'
+            jdkVersionOption: '21'
+            jdkArchitectureOption: 'x64'
+            publishJUnitResults: true
+            testResultsFiles: '**/surefire-reports/TEST-*.xml'
+            goals: 'package'
+
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact'
+          inputs:
+            PathtoPublish: '$(System.DefaultWorkingDirectory)'
+            ArtifactName: 'drop'
+            publishLocation: 'Container'
+                        
